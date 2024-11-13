@@ -1,0 +1,1 @@
+# Troubleshooting for Zabbix Setup
