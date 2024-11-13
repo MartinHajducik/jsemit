@@ -7,8 +7,8 @@ if [[ $EUID -ne 0 ]]; then
 fi
 
 # Generate unique random numbers for the proxy and agent identities
-TLSPSK_IDENTITY_PROXY="PSK $(shuf -i 1000-9999 -n 1)"
-TLSPSK_IDENTITY_AGENT="PSK $(shuf -i 1000-9999 -n 1)"
+TLSPSK_IDENTITY_PROXY="PSK $(shuf -i 1000-999999 -n 1)"
+TLSPSK_IDENTITY_AGENT="PSK $(shuf -i 1000-999999 -n 1)"
 
 # Step 1: Update package list
 apt update
