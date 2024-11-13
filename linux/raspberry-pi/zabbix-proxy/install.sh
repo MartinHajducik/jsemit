@@ -102,7 +102,7 @@ Timeout=30
 Server=127.0.0.0/8,10.0.0.0/8,172.16.0.0/12,192.168.0.0/16
 TLSConnect=psk
 TLSAccept=unencrypted,psk
-TLSPSKIdentity=${TLSPSK_IDENTITY_AGENT}  # This will now hold the generated PSK value
+TLSPSKIdentity=${TLSPSK_IDENTITY_AGENT}
 TLSPSKFile=/etc/zabbix/zabbix_agent.psk
 AllowKey=system.run[*]
 Plugins.SystemRun.LogRemoteCommands=1
@@ -139,7 +139,7 @@ ExternalScripts=/usr/lib/zabbix/externalscripts
 StatsAllowedIP=127.0.0.1
 TLSConnect=psk
 TLSAccept=psk
-TLSPSKIdentity=${TLSPSK_IDENTITY_PROXY}  # This will now hold the generated PSK value
+TLSPSKIdentity=${TLSPSK_IDENTITY_PROXY}
 TLSPSKFile=/etc/zabbix/zabbix_proxy.psk
 _EOF
 
