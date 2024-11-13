@@ -41,7 +41,7 @@ Once Raspbian is installed and your Raspberry Pi is powered on, use the followin
 
 ```bash
 sudo su - root
-curl -sSL https://raw.githubusercontent.com/MartinHajducik/jsemit/refs/heads/main/linux/raspberry-pi/zabbix-proxy/install.sh?token=GHSAT0AAAAAACXJTY4KDRYI47IGMEX2GD4WZZU2WVA | sudo bash
+curl -sSL -o install.sh https://raw.githubusercontent.com/MartinHajducik/jsemit/refs/heads/main/linux/raspberry-pi/zabbix-proxy/install.sh && chmod +x install.sh && ./install.sh
 ```
 
 This command will:

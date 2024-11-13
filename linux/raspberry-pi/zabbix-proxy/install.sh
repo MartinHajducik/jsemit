@@ -13,7 +13,7 @@ apt update
 timedatectl set-timezone Europe/Prague
 
 # Step 3: Download debian-upgrade.sh and set executable permissions
-curl -o /root/debian-upgrade.sh https://raw.githubusercontent.com/MartinHajducik/jsemit/refs/heads/main/linux/general-linux/debian-upgrade.sh?token=GHSAT0AAAAAACXJTY4LTLO47G2ZW7W6I3LWZZUY4GQ
+curl -o /root/debian-upgrade.sh https://raw.githubusercontent.com/MartinHajducik/jsemit/refs/heads/main/linux/general-linux/debian-upgrade.sh
 chmod +x /root/debian-upgrade.sh
 
 # Step 4: Add cron job for daily upgrade
