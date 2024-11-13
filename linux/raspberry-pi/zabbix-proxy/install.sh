@@ -6,7 +6,9 @@ if [[ $EUID -ne 0 ]]; then
    exit 1
 fi
 
-HOST_SHORTNAME=$(hostname -s)
+# Generate unique random numbers for the proxy and agent identities
+TLSPSK_IDENTITY_PROXY="PSK $(shuf -i 1000-9999 -n 1)"
+TLSPSK_IDENTITY_AGENT="PSK $(shuf -i 1000-9999 -n 1)"
 
 # Step 1: Update package list
 apt update
@@ -100,8 +102,8 @@ Timeout=30
 Server=127.0.0.0/8,10.0.0.0/8,172.16.0.0/12,192.168.0.0/16
 TLSConnect=psk
 TLSAccept=unencrypted,psk
-TLSPSKIdentity=PSK-${HOST_SHORTNAME}
-TLSPSKFile=/etc/zabbix/zabbix_secret_key.psk
+TLSPSKIdentity=${TLSPSK_IDENTITY_AGENT}
+TLSPSKFile=/etc/zabbix/zabbix_agent.psk
 AllowKey=system.run[*]
 Plugins.SystemRun.LogRemoteCommands=1
 ControlSocket=/run/zabbix/agent.sock
@@ -120,14 +122,29 @@ LogFileSize=0
 PidFile=/run/zabbix/zabbix_proxy.pid
 SocketDir=/run/zabbix
 DBName=/tmp/zabbix_proxy.db
+SNMPTrapperFile=/var/log/snmptrap/snmptrap.log
+StartHTTPAgentPollers=2
+StartPollers=5
+StartSNMPPollers=1
+StartPollersUnreachable=2
+StartPingers=2
+StartDiscoverers=2
+ProxyOfflineBuffer=24
+ProxyConfigFrequency=60
+DataSenderFrequency=1
+StartVMwareCollectors=1
+VMwareCacheSize=8M
+VMwareTimeout=10
+ExternalScripts=/usr/lib/zabbix/externalscripts
+StatsAllowedIP=127.0.0.1
 TLSConnect=psk
-TLSAccept=unencrypted,psk
-TLSPSKIdentity=PSK-${HOST_SHORTNAME}
+TLSAccept=psk
+TLSPSKIdentity=${TLSPSK_IDENTITY_PROXY}
 TLSPSKFile=/etc/zabbix/zabbix_proxy.psk
 _EOF
 
 # Step 16: Generate PSK keys and restart Zabbix services
-openssl rand -hex 32 > /etc/zabbix/zabbix_secret_key.psk
+openssl rand -hex 32 > /etc/zabbix/zabbix_agent.psk
 openssl rand -hex 32 > /etc/zabbix/zabbix_proxy.psk
 systemctl enable --now zabbix-agent2.service
 systemctl restart zabbix-agent2.service
@@ -135,11 +152,13 @@ systemctl enable --now zabbix-proxy.service
 systemctl restart zabbix-proxy.service
 
 # Step 17: Print generated PSK keys and TLSPSKIdentity
+# Print the generated values along with hostname -s
+echo "TLSPSKIdentity for Agent: ${TLSPSK_IDENTITY_AGENT} (Generated from random number)"
+echo "TLSPSKIdentity for Proxy: ${TLSPSK_IDENTITY_PROXY} (Generated from random number)"
 echo "Zabbix Agent PSK Key ( You have to configure it on ZABBIX AGENT ENCRYPTION TAB TOGETHER WITH PSK IDENTITY ):"
-cat /etc/zabbix/zabbix_secret_key.psk
+cat /etc/zabbix/zabbix_agent.psk
 echo "Zabbix Proxy PSK Key ( You have to configure it on ZABBIX PROXY ENCRYPTION TAB TOGETHER WITH PSK IDENTITY ):"
 cat /etc/zabbix/zabbix_proxy.psk
-echo "TLSPSKIdentity: PSK $(hostname -s)"
 
 # Step 18: Enable Zabbix user as sudoer without password
 cat << '_EOF' > /etc/sudoers.d/zabbix-nopasswd
