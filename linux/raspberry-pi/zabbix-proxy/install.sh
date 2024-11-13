@@ -109,6 +109,7 @@ _EOF
 
 # Step 15: Configure Zabbix Proxy
 cat << '_EOF' > /etc/zabbix/zabbix_proxy.conf
+ProxyMode=1
 Server=0.0.0.0/0
 LogFile=/var/log/zabbix/zabbix_proxy.log
 EnableRemoteCommands=1
@@ -128,6 +129,8 @@ openssl rand -hex 32 > /etc/zabbix/zabbix_secret_key.psk
 openssl rand -hex 32 > /etc/zabbix/zabbix_proxy.psk
 systemctl enable --now zabbix-agent2.service
 systemctl restart zabbix-agent2.service
+systemctl enable --now zabbix-proxy.service
+systemctl restart zabbix-proxy.service
 
 # Step 17: Print generated PSK keys and TLSPSKIdentity
 echo "Zabbix Agent PSK Key ( You have to configure it on ZABBIX AGENT ENCRYPTION TAB TOGETHER WITH PSK IDENTITY ):"
