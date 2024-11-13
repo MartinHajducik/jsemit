@@ -94,7 +94,7 @@ cp /etc/zabbix/zabbix_agent2.conf /etc/zabbix/zabbix_agent2.conf.orig
 cp /etc/zabbix/zabbix_proxy.conf /etc/zabbix/zabbix_proxy.conf.orig
 
 # Step 14: Configure Zabbix Agent
-cat << '_EOF' > /etc/zabbix/zabbix_agent2.conf
+cat << _EOF > /etc/zabbix/zabbix_agent2.conf
 PidFile=/var/run/zabbix/zabbix_agent2.pid
 LogFile=/var/log/zabbix/zabbix_agent2.log
 LogFileSize=0
@@ -102,7 +102,7 @@ Timeout=30
 Server=127.0.0.0/8,10.0.0.0/8,172.16.0.0/12,192.168.0.0/16
 TLSConnect=psk
 TLSAccept=unencrypted,psk
-TLSPSKIdentity=${TLSPSK_IDENTITY_AGENT}
+TLSPSKIdentity=${TLSPSK_IDENTITY_AGENT}  # This will now hold the generated PSK value
 TLSPSKFile=/etc/zabbix/zabbix_agent.psk
 AllowKey=system.run[*]
 Plugins.SystemRun.LogRemoteCommands=1
@@ -112,7 +112,7 @@ Include=./zabbix_agent2.d/plugins.d/*.conf
 _EOF
 
 # Step 15: Configure Zabbix Proxy
-cat << '_EOF' > /etc/zabbix/zabbix_proxy.conf
+cat << _EOF > /etc/zabbix/zabbix_proxy.conf
 ProxyMode=1
 Server=0.0.0.0/0
 LogFile=/var/log/zabbix/zabbix_proxy.log
@@ -139,7 +139,7 @@ ExternalScripts=/usr/lib/zabbix/externalscripts
 StatsAllowedIP=127.0.0.1
 TLSConnect=psk
 TLSAccept=psk
-TLSPSKIdentity=${TLSPSK_IDENTITY_PROXY}
+TLSPSKIdentity=${TLSPSK_IDENTITY_PROXY}  # This will now hold the generated PSK value
 TLSPSKFile=/etc/zabbix/zabbix_proxy.psk
 _EOF
 
@@ -152,7 +152,6 @@ systemctl enable --now zabbix-proxy.service
 systemctl restart zabbix-proxy.service
 
 # Step 17: Print generated PSK keys and TLSPSKIdentity
-# Print the generated values along with hostname -s
 echo "TLSPSKIdentity for Agent: ${TLSPSK_IDENTITY_AGENT} (Generated from random number)"
 echo "TLSPSKIdentity for Proxy: ${TLSPSK_IDENTITY_PROXY} (Generated from random number)"
 echo "Zabbix Agent PSK Key ( You have to configure it on ZABBIX AGENT ENCRYPTION TAB TOGETHER WITH PSK IDENTITY ):"
