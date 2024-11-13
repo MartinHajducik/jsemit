@@ -6,6 +6,8 @@ if [[ $EUID -ne 0 ]]; then
    exit 1
 fi
 
+HOST_SHORTNAME=$(hostname -s)
+
 # Step 1: Update package list
 apt update
 
@@ -98,7 +100,7 @@ Timeout=30
 Server=127.0.0.0/8,10.0.0.0/8,172.16.0.0/12,192.168.0.0/16
 TLSConnect=psk
 TLSAccept=unencrypted,psk
-TLSPSKIdentity=PSK $(hostname -s)
+TLSPSKIdentity=PSK-${HOST_SHORTNAME}
 TLSPSKFile=/etc/zabbix/zabbix_secret_key.psk
 AllowKey=system.run[*]
 Plugins.SystemRun.LogRemoteCommands=1
@@ -119,8 +121,8 @@ PidFile=/run/zabbix/zabbix_proxy.pid
 SocketDir=/run/zabbix
 DBName=/tmp/zabbix_proxy.db
 TLSConnect=psk
-TLSAccept=psk
-TLSPSKIdentity=PSK $(hostname -s)
+TLSAccept=unencrypted,psk
+TLSPSKIdentity=PSK-${HOST_SHORTNAME}
 TLSPSKFile=/etc/zabbix/zabbix_proxy.psk
 _EOF
 
