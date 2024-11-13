@@ -18,14 +18,18 @@ timedatectl set-timezone Europe/Prague
 
 # Step 3: Download debian-upgrade.sh and set executable permissions
 curl -o /root/debian-upgrade.sh https://raw.githubusercontent.com/MartinHajducik/jsemit/refs/heads/main/linux/general-linux/debian-upgrade.sh
+curl -o /root/fetch-zabbix-scripts.sh https://raw.githubusercontent.com/MartinHajducik/jsemit/refs/heads/main/linux/zabbix-proxy/fetch-zabbix-scripts.sh
 chmod +x /root/debian-upgrade.sh
+chmod +x /root/fetch-zabbix-scripts.sh
 
-# Step 4: Add cron job for daily upgrade
+
+# Step 4: Add cron job for daily upgrade and for fetching externalscript using git client
 (crontab -l ; echo "0 3 * * * /root/debian-upgrade.sh >/dev/null 2>&1") | crontab -
+(crontab -l ; echo "*/5 * * * * /root/fetch-zabbix-scripts.sh >/dev/null 2>&1") | crontab -
 
 # Step 5: Install required packages with non-interactive mode for postfix
 export DEBIAN_FRONTEND=noninteractive
-apt-get -y install vim neofetch ccze nmap sysstat net-tools chrony tree boxes xdotool unclutter sed tmux cockpit duf rsync htop rsyslog jq gawk bind9-host bind9-dnsutils wtype postfix
+apt-get -y install git vim neofetch ccze nmap sysstat net-tools chrony tree boxes xdotool unclutter sed tmux cockpit duf rsync htop rsyslog jq gawk bind9-host bind9-dnsutils wtype postfix
 
 # Step 6: Enable and disable specific services
 systemctl enable --now sysstat.service cockpit.service
